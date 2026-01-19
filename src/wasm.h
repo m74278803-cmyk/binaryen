@@ -2654,15 +2654,16 @@ struct ShallowExpression {
   Module* module = nullptr;
 };
 
-std::ostream& operator<<(std::ostream& o, wasm::Module& module);
-std::ostream& operator<<(std::ostream& o, wasm::Function& func);
-std::ostream& operator<<(std::ostream& o, wasm::Expression& expression);
-std::ostream& operator<<(std::ostream& o, wasm::ModuleExpression pair);
-std::ostream& operator<<(std::ostream& o, wasm::ShallowExpression expression);
-std::ostream& operator<<(std::ostream& o, wasm::ModuleType pair);
-std::ostream& operator<<(std::ostream& o, wasm::ModuleHeapType pair);
-std::ostream& operator<<(std::ostream& os, wasm::MemoryOrder mo);
+std::ostream& operator<<(std::ostream& o, Module& module);
+std::ostream& operator<<(std::ostream& o, Function& func);
+std::ostream& operator<<(std::ostream& o, Expression& expression);
+std::ostream& operator<<(std::ostream& o, ModuleExpression pair);
+std::ostream& operator<<(std::ostream& o, ShallowExpression expression);
+std::ostream& operator<<(std::ostream& o, ModuleType pair);
+std::ostream& operator<<(std::ostream& o, ModuleHeapType pair);
+std::ostream& operator<<(std::ostream& o, MemoryOrder mo);
 std::ostream& operator<<(std::ostream& o, const wasm::ImportNames& importNames);
+std::ostream& operator<<(std::ostream& o, const Table& table);
 
 } // namespace wasm
 

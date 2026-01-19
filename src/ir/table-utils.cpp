@@ -21,9 +21,10 @@
 
 namespace wasm::TableUtils {
 
-bool isSubType(const Table& a, const Table& b) {
-  return a.addressType == b.addressType && Type::isSubType(a.type, b.type) &&
-         a.initial >= b.initial && a.max <= b.max;
+bool isSubType(const RuntimeTable& a, const Table& b) {
+  return a.tableMeta()->addressType == b.addressType &&
+         Type::isSubType(a.tableMeta()->type, b.type) &&
+         a.size() >= b.initial && a.tableMeta()->max <= b.max;
 }
 
 std::set<Name> getFunctionsNeedingElemDeclare(Module& wasm) {

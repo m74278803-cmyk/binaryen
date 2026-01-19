@@ -3889,15 +3889,15 @@ static std::ostream& printStackIR(StackIR* ir, PrintSExpression& printer) {
 
 std::ostream&
 printStackIR(std::ostream& o, Module* module, const PassOptions& options) {
-  wasm::PassRunner runner(module, options);
+  PassRunner runner(module, options);
   runner.add(std::make_unique<PrintStackIR>(&o));
   runner.run();
   return o;
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::Module& module) {
-  wasm::PassRunner runner(&module);
-  wasm::Printer printer(&o);
+std::ostream& operator<<(std::ostream& o, Module& module) {
+  PassRunner runner(&module);
+  Printer printer(&o);
   // Do not use runner.run(), since that will cause an infinite recursion in
   // BINARYEN_PASS_DEBUG=3, which prints modules (using this function) as part
   // of running passes.
@@ -3906,20 +3906,20 @@ std::ostream& operator<<(std::ostream& o, wasm::Module& module) {
   return o;
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::Function& func) {
-  wasm::PrintSExpression print(o);
+std::ostream& operator<<(std::ostream& o, Function& func) {
+  PrintSExpression print(o);
   print.setMinify(false);
   print.setDebugInfo(false);
   print.visitFunction(&func);
   return o;
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::Expression& expression) {
-  return wasm::printExpression(&expression, o);
+std::ostream& operator<<(std::ostream& o, Expression& expression) {
+  return printExpression(&expression, o);
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::Expression* expression) {
-  return wasm::printExpression(expression, o);
+std::ostream& operator<<(std::ostream& o, Expression* expression) {
+  return printExpression(expression, o);
 }
 
 std::ostream& operator<<(std::ostream& o, wasm::ModuleExpression pair) {
@@ -3933,16 +3933,16 @@ std::ostream& operator<<(std::ostream& o, wasm::ShallowExpression expression) {
   return o;
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::StackInst& inst) {
-  return wasm::printStackInst(&inst, o);
+std::ostream& operator<<(std::ostream& o, StackInst& inst) {
+  return printStackInst(&inst, o);
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::ModuleType pair) {
-  wasm::printTypeOrName(pair.second, o, &pair.first);
+std::ostream& operator<<(std::ostream& o, ModuleType pair) {
+  printTypeOrName(pair.second, o, &pair.first);
   return o;
 }
 
-std::ostream& operator<<(std::ostream& o, wasm::ModuleHeapType pair) {
+std::ostream& operator<<(std::ostream& o, ModuleHeapType pair) {
   if (auto it = pair.first.typeNames.find(pair.second);
       it != pair.first.typeNames.end()) {
     return o << it->second.name;
@@ -3950,24 +3950,30 @@ std::ostream& operator<<(std::ostream& o, wasm::ModuleHeapType pair) {
   return o << "(unnamed)";
 }
 
-std::ostream& operator<<(std::ostream& o,
-                         const wasm::ImportNames& importNames) {
+std::ostream& operator<<(std::ostream& o, const ImportNames& importNames) {
   return o << importNames.module << "." << importNames.name;
 }
 
-std::ostream& operator<<(std::ostream& os, wasm::MemoryOrder mo) {
+std::ostream& operator<<(std::ostream& os, MemoryOrder mo) {
   switch (mo) {
-    case wasm::MemoryOrder::Unordered:
+    case MemoryOrder::Unordered:
       os << "Unordered";
       break;
-    case wasm::MemoryOrder::SeqCst:
+    case MemoryOrder::SeqCst:
       os << "SeqCst";
       break;
-    case wasm::MemoryOrder::AcqRel:
+    case MemoryOrder::AcqRel:
       os << "AcqRel";
       break;
   }
   return os;
+}
+
+std::ostream& operator<<(std::ostream& o, const Table& table) {
+  wasm::PrintSExpression printer(o);
+  // TODO: printTableHeader should take a const Table*
+  printer.printTableHeader(const_cast<Table*>(&table));
+  return o;
 }
 
 } // namespace wasm

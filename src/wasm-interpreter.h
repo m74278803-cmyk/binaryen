@@ -3221,12 +3221,12 @@ public:
     // initialize the rest of the external interface
     externalInterface->init(wasm, *self());
 
+    initializeGlobals();
+    initializeTables();
+
     if (validateImports_) {
       validateImports();
     }
-
-    initializeGlobals();
-    initializeTables();
 
     initializeMemoryContents();
 
@@ -3403,12 +3403,19 @@ private:
           }
         }
 
-        // TODO: Use the table's runtime information when checking this.
-        if (auto** table = std::get_if<Table*>(&import)) {
-          Table* exportedTable =
-            importedInstance->wasm.getTable(*export_->getInternalName());
-          if (!TableUtils::isSubType(*exportedTable, **table)) {
-            trap("Imported table isn't compatible");
+        if (auto** tableDecl = std::get_if<Table*>(&import)) {
+          auto* importedTable = importResolver->getTableOrNull(
+            importable->importNames(), **tableDecl);
+          if (!importedTable) {
+            trap((std::stringstream() << "No imported table found for export "
+                                      << importable->importNames())
+                   .str());
+          }
+          if (!TableUtils::isSubType(*importedTable, **tableDecl)) {
+            trap((std::stringstream()
+                  << "Imported table isn't compatible with import declaration: "
+                  << **tableDecl)
+                   .str());
           }
         }
       });
