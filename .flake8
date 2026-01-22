@@ -1,4 +1,8 @@
-[flake8]
+Document this.
+Run wasm-opt explicitly (with aggressive flags) as part of build-wasm-stdlib.
+Add a check to the build-wasm xtask for wasm-opt 
+download it to .cache/tree-sitter if 
+there.[flake8]
 ignore =
   ; line too long
   E501,
